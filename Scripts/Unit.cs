@@ -18,7 +18,11 @@ public class Unit {
 	int maxHealth;
 	
 	int currentHealth;
-	GameObject displayObject;
+	GameObject displayObject=null;
+	
+	
+	GameObject unitLocation=null;
+	bool placed=false;
 
 	//instantiation methods 
 	
@@ -29,6 +33,7 @@ public class Unit {
 		maxHealth=inHealth;
 		prefabName=inPrefabName;
 		offset=inOffset;
+		
 	}	
 	
 	public void addMove(string inName, string inType, int inRange) {	
@@ -112,13 +117,30 @@ public class Unit {
 	}	
 	
 	public void setDisplayObject(GameObject inDisplayObject) {
+		//Debug.Log("set displayobject display object name" + inDisplayObject.name);
 		displayObject=inDisplayObject;
+		displayObject.GetComponent<UnitSelectCode>().setUnit(this);
+		//Debug.Log("display object name" + displayObject.name);
 		
 	}	
 	
 	public GameObject getDisplayObject() {
 		return displayObject;
 		
+	}	
+	
+	public GameObject getUnitLocation() {
+		return unitLocation;
+	}	
+	
+	public bool isPlaced() {
+		return placed;	
+	}	
+	
+	public void PlaceUnit(GameObject placementTile) {
+	
+		unitLocation=placementTile;
+		placed=true;
 	}	
 	
 	//access methods for unitlist

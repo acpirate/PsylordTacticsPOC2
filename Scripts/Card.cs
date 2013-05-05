@@ -8,7 +8,7 @@ public enum CARDTYPE { ACTION, ENERGY, POWER};
 
 public class Card {
 	
-	static List<Card> cardList = new List<Card>();
+	public static List<Card> cardList = new List<Card>();
 	
 	string name;
 	string number;
@@ -74,7 +74,27 @@ public class Card {
 				bool tempEndTurn = false;
 				if (endTurnString=="true") tempEndTurn=true;  
 				//texture
-				string tempTextuer=XMLHandler.ExtractXMLString(cardNode,"Texture");
+				string tempTexture=XMLHandler.ExtractXMLString(cardNode,"Texture");
+				//foundationcard
+				bool tempFoundationCard=false;
+				string foundationCardString=cardNode.Attributes["foundation"].Value;
+				if (foundationCardString=="true") tempFoundationCard=true;
+				
+				//construct card		
+				cardList.Add(new Card(tempName,tempNumber,tempDeckLimit,tempTexture,tempEndTurn,tempFoundationCard,tempType));
+				// add effects to the card
+				foreach(XmlNode effectNode in cardNode.SelectNodes("Effect")) {
+				
+					/*string moveTempName=attackNode.Attributes["name"].Value;
+					string moveTempType=attackNode.Attributes["type"].Value;
+					int moveTempRange;
+					int.TryParse(attackNode.Attributes["range"].Value, out moveTempRange);*/
+
+					string tempEffectType=effectNode.Value;
+					
+					cardList[cardList.Count-1].addEffect(tempEffectType);
+				}
+				
 				
 			}	
 			
@@ -83,58 +103,28 @@ public class Card {
 		
 	}	
 	
-/*	public static void Initialize() {
-		//Debug.Log("in initialize");
-		//Debug.Log(unitList.Count);
+	public static Card getCard(string cardNumberToGet) {
 		
-		if (unitList.Count==0) {
+		Card returnCard=null;
 		
-			XmlDocument unitData = new XmlDocument();
-			unitData.LoadXml(Resources.Load("UnitList").ToString());
-			
-			//Debug.Log(unitData);
-			//iterate over each unit in the xml data
-			foreach (XmlNode unitNode in unitData.DocumentElement.ChildNodes) {
-					int tempHealth;
-					string tempName=XMLHandler.ExtractXMLString(unitNode,"Name");
-					string tempNumber=XMLHandler.ExtractXMLString(unitNode,"Number");
-					int.TryParse(XMLHandler.ExtractXMLString(unitNode,"Health"),out tempHealth);
-					string tempPrefab=XMLHandler.ExtractXMLString(unitNode,"Prefab");
-					float tempOffset;
-					float.TryParse(XMLHandler.ExtractXMLString(unitNode,"Offset"),out tempOffset);
-					//add unit to the unit list
-					unitList.Add(new Unit(tempName,tempNumber,tempHealth,tempPrefab, tempOffset));
-					//add the attack modes to the unit
-					foreach(XmlNode attackNode in unitNode.SelectNodes("Attack")) {
-					
-						string attackTempName=attackNode.Attributes["name"].Value;
-						string attackTempType=attackNode.Attributes["type"].Value;
-						int attackTempRange;
-						int.TryParse(attackNode.Attributes["range"].Value, out attackTempRange);
-						int attackTempDamage;
-						int.TryParse(attackNode.Attributes["damage"].Value, out attackTempDamage);
-						int attackTempAccuracy;
-						int.TryParse(attackNode.Attributes["accuracy"].Value, out attackTempAccuracy);
-					
-						unitList[unitList.Count-1].addAttack(attackTempName,attackTempType,attackTempRange,attackTempDamage,attackTempAccuracy);
-					}
-					// add the move modes to the unit
-					foreach(XmlNode attackNode in unitNode.SelectNodes("Move")) {
-					
-						string moveTempName=attackNode.Attributes["name"].Value;
-						string moveTempType=attackNode.Attributes["type"].Value;
-						int moveTempRange;
-						int.TryParse(attackNode.Attributes["range"].Value, out moveTempRange);
-	
-					
-						unitList[unitList.Count-1].addMove(moveTempName,moveTempType,moveTempRange);
-					}				
-			}
-			
+		foreach (Card cardIterator in cardList) {
+			//Debug.Log(unitIterator.getName());
+			if (cardIterator.getNumber()==cardNumberToGet) returnCard=cardIterator;	
 		}	
-	}*/	
+		
+			
+		
+		if (returnCard==null) {
+			Debug.Log("(Card class) unable to find requested card "+cardNumberToGet);	
+		}	
+		
+		return returnCard;
+		
+	}
 	
-	
+	public string getNumber() {
+		return number;	
+	}	
 	
 }
 
